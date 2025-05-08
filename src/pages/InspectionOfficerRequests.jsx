@@ -5,92 +5,31 @@ import { motion } from "framer-motion"
 import Swal from "sweetalert2"
 import SideNavBar from "../components/SideNavBar"
 import TopNavBar from "../components/TopNavBar"
+import ApprovalModal from "../components/ApprovalModal"
 import RejectionModal from "../components/RejectionModal"
 import { AuthContext } from "../context/AuthContext"
+// NOTE: If using 'jwt-decode', the correct import is usually:
+// import jwtDecode from "jwt-decode"
 import { jwtDecode } from "jwt-decode"
 import { FaSortUp, FaSortDown } from "react-icons/fa"
 
-// Challan Modal Component
-const ChallanModal = ({ isOpen, onClose, onConfirm, requestId }) => {
-  const [amount, setAmount] = useState("")
-  const [type, setType] = useState("Registration")
-
-  const handleSubmit = () => {
-    if (!amount || isNaN(amount) || amount <= 0) {
-      Swal.fire("Error", "Please enter a valid amount.", "error")
-      return
-    }
-    onConfirm(requestId, amount, type)
-  }
-
-  if (!isOpen) return null
-
-  return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-gray-800 p-6 rounded-lg shadow-xl max-w-md w-full border border-gray-700">
-        <h2 className="text-2xl font-semibold text-orange-400 mb-4">Create Challan</h2>
-        <div className="mb-4">
-          <label className="block text-gray-300 mb-2" htmlFor="amount">
-            Amount
-          </label>
-          <input
-            type="number"
-            id="amount"
-            value={amount}
-            onChange={(e) => setAmount(e.target.value)}
-            className="w-full p-2 bg-gray-700 text-gray-300 rounded-lg border border-gray-600 focus:outline-none focus:border-orange-400"
-            placeholder="Enter amount"
-            min="0"
-            step="0.01"
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block text-gray-300 mb-2" htmlFor="type">
-            Type
-          </label>
-          <select
-            id="type"
-            value={type}
-            onChange={(e) => setType(e.target.value)}
-            className="w-full p-2 bg-gray-700 text-gray-300 rounded-lg border border-gray-600 focus:outline-none focus:border-orange-400"
-          >
-            <option value="Registration">Registration</option>
-            <option value="Ownership Transfer">Ownership Transfer</option>
-          </select>
-        </div>
-        <div className="flex justify-end space-x-3">
-          <button
-            onClick={onClose}
-            className="bg-gray-600 hover:bg-gray-700 text-gray-300 px-4 py-2 rounded-lg transition"
-          >
-            Cancel
-          </button>
-          <button
-            onClick={handleSubmit}
-            className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg transition"
-          >
-            Submit
-          </button>
-        </div>
-      </div>
-    </div>
-  )
-}
-
 const InspectionOfficerRequests = () => {
   const [inspectionRequests, setInspectionRequests] = useState([])
-  const [acceptedRequests, setAcceptedRequests] = useState([])
+  const [acceptedRequests, setAcceptedRequests] = useState([]) // NEW: For approved requests
+
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [sortOrder, setSortOrder] = useState("asc")
   const [loggedInUserId, setLoggedInUserId] = useState(null)
+
+  // Modal states
+  const [showApprovalModal, setShowApprovalModal] = useState(false)
   const [showRejectionModal, setShowRejectionModal] = useState(false)
-  const [showChallanModal, setShowChallanModal] = useState(false)
   const [selectedRequestId, setSelectedRequestId] = useState(null)
-  const [modalAction, setModalAction] = useState(null)
 
   const { logout, user } = useContext(AuthContext)
   const navigate = useNavigate()
 
+  // Decode token to get user ID
   useEffect(() => {
     const storedToken = localStorage.getItem("token")
     if (storedToken) {
@@ -104,6 +43,7 @@ const InspectionOfficerRequests = () => {
     }
   }, [logout])
 
+  // Ensure only an Inspection Officer can access
   useEffect(() => {
     if (!user || user.role !== "InspectionOfficer") {
       Swal.fire("Unauthorized", "Access denied!", "error")
@@ -111,33 +51,34 @@ const InspectionOfficerRequests = () => {
     }
   }, [user, logout])
 
+  // Fetch all inspection requests for the logged-in officer
   useEffect(() => {
     if (!loggedInUserId) return
 
     const fetchInspectionRequests = async () => {
       try {
         const response = await axios.get(
-          "https://api-securechain-fcf7cnfkcebug3em.westindia-01.azurewebsites.net/api/fetch-inspection-request-byOfficialID",
+          "http://localhost:8085/api/fetch-inspection-request-byOfficialID",
           { params: { officerId: loggedInUserId } }
-        )
-        const allRequests = response.data.data
-        const pending = allRequests.filter((req) => req.Status === "Pending")
-        // Initialize accepted requests with hasChallan: false
-        const approved = allRequests
-          .filter((req) => req.Status === "Approved")
-          .map((req) => ({ ...req, hasChallan: false }))
-        setInspectionRequests(pending)
-        setAcceptedRequests(approved)
+        );
+        const allRequests = response.data.data;
+  
+        // Separate requests based on their Status
+        const pending = allRequests.filter((req) => req.Status === "Pending");
+        const approved = allRequests.filter((req) => req.Status === "Approved");
+  
+        setInspectionRequests(pending);
+        setAcceptedRequests(approved);
       } catch (error) {
-        Swal.fire("Error", "Failed to fetch inspection requests.", "error")
+        Swal.fire("Error", "Failed to fetch inspection requests.", "error");
       }
-    }
-
+    };
+  
     if (loggedInUserId) {
-      fetchInspectionRequests()
+      fetchInspectionRequests();
     }
-  }, [loggedInUserId])
-
+  }, [loggedInUserId]);
+  // Sort requests by appointment date
   const sortByDate = () => {
     const sorted = [...inspectionRequests].sort((a, b) => {
       const dateA = new Date(a.AppointmentDate || 0)
@@ -148,57 +89,31 @@ const InspectionOfficerRequests = () => {
     setSortOrder(sortOrder === "asc" ? "desc" : "asc")
   }
 
-  const approveRequest = async (requestId, amount, type) => {
+  // Approve request => Move it to acceptedRequests, remove from inspectionRequests
+  const approveRequest = async (requestId) => {
     try {
-      await axios.put("https://api-securechain-fcf7cnfkcebug3em.westindia-01.azurewebsites.net/api/approveInspection", { requestId })
-      await axios.post("https://api-securechain-fcf7cnfkcebug3em.westindia-01.azurewebsites.net/api/createChallan", {
-        vehicleId: inspectionRequests.find((req) => req.InspectionId === requestId).VehicleId,
-        amount: parseFloat(amount),
-        type,
-      })
-      Swal.fire("Success", "Approved vehicle and challan created successfully!", "success")
+      await axios.put("http://localhost:8085/api/approveInspection", { requestId })
+      Swal.fire("Approved", "Inspection request approved!", "success")
 
+      // Find the request being approved
       const acceptedRequest = inspectionRequests.find((req) => req.InspectionId === requestId)
       if (acceptedRequest) {
-        setAcceptedRequests((prev) => [...prev, { ...acceptedRequest, hasChallan: true }])
+        // Move it to the accepted requests list
+        setAcceptedRequests((prev) => [...prev, acceptedRequest])
       }
+
+      // Remove it from the pending requests list
       setInspectionRequests((prev) => prev.filter((req) => req.InspectionId !== requestId))
-      setShowChallanModal(false)
-    } catch (error) {
-      Swal.fire("Error", "Failed to approve request or create challan.", "error")
-    }
-  }
 
-  const createChallanForApproved = async (requestId, amount, type) => {
-    try {
-      await axios.post("https://api-securechain-fcf7cnfkcebug3em.westindia-01.azurewebsites.net/api/createChallan", {
-        vehicleId: acceptedRequests.find((req) => req.InspectionId === requestId).VehicleId,
-        amount: parseFloat(amount),
-        type,
-      })
-      Swal.fire("Success", "Challan created successfully!", "success")
-      setAcceptedRequests((prev) =>
-        prev.map((req) =>
-          req.InspectionId === requestId ? { ...req, hasChallan: true } : req
-        )
-      )
-      setShowChallanModal(false)
+      setShowApprovalModal(false) // close modal
     } catch (error) {
-      Swal.fire("Error", "Failed to create challan.", "error")
-    }
-  }
-
-  const handleChallanSubmit = (requestId, amount, type) => {
-    if (modalAction === "approve") {
-      approveRequest(requestId, amount, type)
-    } else if (modalAction === "createChallan") {
-      createChallanForApproved(requestId, amount, type)
+      Swal.fire("Error", "Failed to approve request.", "error")
     }
   }
 
   const rejectRequest = async (requestId, reason) => {
     try {
-      await axios.put("https://api-securechain-fcf7cnfkcebug3em.westindia-01.azurewebsites.net/api/rejectInspection", { requestId, reason })
+      await axios.put("http://localhost:8085/api/rejectInspection", { requestId, reason })
       Swal.fire("Rejected", "Inspection request rejected!", "error")
       setInspectionRequests((prev) => prev.filter((req) => req.InspectionId !== requestId))
       setShowRejectionModal(false)
@@ -221,6 +136,7 @@ const InspectionOfficerRequests = () => {
             🚗 Inspection Requests
           </motion.h1>
 
+          {/* PENDING INSPECTION REQUESTS SECTION */}
           <div className="bg-gray-800 shadow-xl rounded-lg p-6 border border-gray-700">
             <h2 className="text-2xl font-semibold text-orange-400 mb-4">Pending Inspection Requests</h2>
 
@@ -272,8 +188,7 @@ const InspectionOfficerRequests = () => {
                         <button
                           onClick={() => {
                             setSelectedRequestId(req.InspectionId)
-                            setModalAction("approve")
-                            setShowChallanModal(true)
+                            setShowApprovalModal(true)
                           }}
                           className="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-lg transition"
                         >
@@ -302,6 +217,7 @@ const InspectionOfficerRequests = () => {
             )}
           </div>
 
+          {/* APPROVED REQUESTS SECTION */}
           {acceptedRequests.length > 0 && (
             <div className="bg-gray-800 shadow-xl rounded-lg p-6 border border-gray-700 mt-10">
               <h2 className="text-2xl font-semibold text-green-400 mb-4">
@@ -314,7 +230,6 @@ const InspectionOfficerRequests = () => {
                     <th className="p-3 border-b border-gray-600 text-left">Vehicle</th>
                     <th className="p-3 border-b border-gray-600 text-left">Status</th>
                     <th className="p-3 border-b border-gray-600 text-left">Appointment</th>
-                    <th className="p-3 border-b border-gray-600 text-center">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -336,20 +251,6 @@ const InspectionOfficerRequests = () => {
                           ? new Date(req.AppointmentDate).toLocaleDateString()
                           : "N/A"}
                       </td>
-                      <td className="p-3 flex justify-center space-x-3">
-                        {!req.hasChallan && (
-                          <button
-                            onClick={() => {
-                              setSelectedRequestId(req.InspectionId)
-                              setModalAction("createChallan")
-                              setShowChallanModal(true)
-                            }}
-                            className="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded-lg transition"
-                          >
-                            Create Challan
-                          </button>
-                        )}
-                      </td>
                     </motion.tr>
                   ))}
                 </tbody>
@@ -359,18 +260,21 @@ const InspectionOfficerRequests = () => {
         </main>
       </div>
 
+      {/* Modals */}
+      <ApprovalModal
+        isOpen={showApprovalModal}
+        onClose={() => setShowApprovalModal(false)}
+        onConfirm={approveRequest}
+        requestId={selectedRequestId}
+      />
+      
       <RejectionModal
         isOpen={showRejectionModal}
         onClose={() => setShowRejectionModal(false)}
         onConfirm={rejectRequest}
         requestId={selectedRequestId}
-      />
-      <ChallanModal
-        isOpen={showChallanModal}
-        onClose={() => setShowChallanModal(false)}
-        onConfirm={handleChallanSubmit}
-        requestId={selectedRequestId}
-      />
+      /> 
+     
     </div>
   )
 }

@@ -72,7 +72,7 @@ const Transactions = () => {
   useEffect(() => {
     const fetchTransactions = async () => {
       try {
-        const response = await axios.get('https://api-securechain-fcf7cnfkcebug3em.westindia-01.azurewebsites.net/api/transactions');
+        const response = await axios.get('http://localhost:8085/api/transactions');
         setTransactions(response.data);
         setLoading(false);
       } catch (error) {
@@ -91,7 +91,7 @@ const Transactions = () => {
     setIsGenerating(true);
     try {
       const response = await axios.post(
-        'https://api-securechain-fcf7cnfkcebug3em.westindia-01.azurewebsites.net/api/generateTransactionPDF',
+        'http://localhost:8085/api/generateTransactionPDF',
         { transactionId },
         { responseType: 'blob' }
       );
@@ -110,7 +110,7 @@ const Transactions = () => {
   const handleDownloadAllPDFs = async () => {
     setIsGenerating(true);
     try {
-      const response = await axios.get('https://api-securechain-fcf7cnfkcebug3em.westindia-01.azurewebsites.net/api/generateAllTransactionsPDF', {
+      const response = await axios.get('http://localhost:8085/api/generateAllTransactionsPDF', {
         responseType: 'blob',
       });
       const blob = new Blob([response.data], { type: 'application/pdf' });

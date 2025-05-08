@@ -32,7 +32,6 @@ import PendingRegistrations from './pages/PendingRegistrations';
 import InspectionOfficerDashboard from './pages/InspectionOfficerDashboard';
 import InspectionOfficerRequests from './pages/InspectionOfficerRequests';
 import VehicleDetails from './pages/VehicleDetails';
-import UserMyChallans from './pages/user/MyChallans';
 
 const App = () => {
   return (
@@ -118,14 +117,6 @@ const App = () => {
             element={
               <PrivateRoute role="user">
                 <UserTransferTo />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/user-my-challans"
-            element={
-              <PrivateRoute role="user">
-                <UserMyChallans />
               </PrivateRoute>
             }
           />

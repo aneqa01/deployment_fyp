@@ -107,7 +107,7 @@ export default function UserVehicleRegister() {
     };
 
     try {
-      const response = await axios.post('https://api-securechain-fcf7cnfkcebug3em.westindia-01.azurewebsites.net/api/registerVehicleRequest', vehicleData, {
+      const response = await axios.post('http://localhost:8085/api/registerVehicleRequest', vehicleData, {
         headers: {
           Authorization: `Bearer ${storedToken}`,
           'Content-Type': 'application/json',
