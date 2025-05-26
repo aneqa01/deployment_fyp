@@ -36,7 +36,7 @@ const ChangePasswordGovernmentOfficial = () => {
 
     try {
       const response = await axios.put(
-        'http://localhost:8085/api/update-password',
+        'https://api-securechain-fcf7cnfkcebug3em.westindia-01.azurewebsites.net/api/update-password',
         {
           email: formData.email, // Include email in the payload
           newPassword: formData.newPassword,

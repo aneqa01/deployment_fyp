@@ -45,6 +45,7 @@ export default function UserVehicleRegister() {
   const { logout } = useContext(AuthContext);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const navigate = useNavigate();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [formData, setFormData] = useState({
     make: '',
@@ -69,10 +70,13 @@ export default function UserVehicleRegister() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true);
+    setError(null);
 
     const storedToken = localStorage.getItem('token');
     if (!storedToken) {
       setError('You must be logged in to register a vehicle.');
+      setIsSubmitting(false);
       return;
     }
 
@@ -82,17 +86,20 @@ export default function UserVehicleRegister() {
     } catch (err) {
       console.error('Error decoding token:', err);
       setError('Invalid token. Please log in again.');
+      setIsSubmitting(false);
       return;
     }
 
     const loggedInUserId = decoded.userId;
     if (!loggedInUserId) {
       setError('Could not find user ID in token. Please log in again.');
+      setIsSubmitting(false);
       return;
     }
 
     if (!formData.make || !formData.model || !formData.year || !formData.chassisNumber || !formData.engineNumber) {
       setError('All fields must be filled out.');
+      setIsSubmitting(false);
       return;
     }
 
@@ -107,12 +114,27 @@ export default function UserVehicleRegister() {
     };
 
     try {
-      const response = await axios.post('http://localhost:8085/api/registerVehicleRequest', vehicleData, {
-        headers: {
-          Authorization: `Bearer ${storedToken}`,
-          'Content-Type': 'application/json',
-        },
+      // Show loading state
+      Swal.fire({
+        title: 'Registering Vehicle',
+        text: 'Please wait while we process your registration...',
+        allowOutsideClick: false,
+        didOpen: () => {
+          Swal.showLoading();
+        }
       });
+
+      // Step 1: Register the vehicle
+      const response = await axios.post(
+        'https://api-securechain-fcf7cnfkcebug3em.westindia-01.azurewebsites.net/api/registerVehicleRequest', 
+        vehicleData, 
+        {
+          headers: {
+            Authorization: `Bearer ${storedToken}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
 
       if (response.status === 200) {
         // Extract VehicleId from the nested JSON response
@@ -121,19 +143,66 @@ export default function UserVehicleRegister() {
         // Store the VehicleId in localStorage
         localStorage.setItem('vehicleId', vehicleId);
 
+        // Step 2: Get user email from the backend
+        const userResponse = await axios.get(
+          `https://api-securechain-fcf7cnfkcebug3em.westindia-01.azurewebsites.net/api/user/${loggedInUserId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${storedToken}`,
+            },
+          }
+        );
+
+        const userEmail = userResponse.data.email;
+        const userName = userResponse.data.name || "User";
+
+        // Step 3: Send email notification
+        const emailData = {
+          to: userEmail,
+          subject: "Vehicle Registration in Progress",
+          data: {
+            user: userName,
+            action: "registered a new vehicle",
+            vehicle: `${formData.make} ${formData.model} (${formData.year})`,
+            status: "Registration in progress. Awaiting government approval."
+          }
+        };
+
+        await axios.post(
+          'https://api-securechain-fcf7cnfkcebug3em.westindia-01.azurewebsites.net/api/send-email',
+          emailData,
+          {
+            headers: {
+              Authorization: `Bearer ${storedToken}`,
+              'Content-Type': 'application/json',
+            },
+          }
+        );
+
         Swal.fire({
           title: 'Vehicle Registered!',
-          text: `Vehicle ID: ${vehicleId} has been saved. Waiting for government approval.`,
-          icon: 'info',
-          confirmButtonText: 'OK',
+          text: `Your ${formData.make} ${formData.model} has been registered successfully. A confirmation email has been sent to your email address. Waiting for government approval.`,
+          icon: 'success',
+          confirmButtonText: 'Continue to Document Upload',
+          confirmButtonColor: '#F38120',
+        }).then((result) => {
+          if (result.isConfirmed) {
+            // Redirect to DocumentUpload page
+            navigate('/document-upload');
+          }
         });
-
-        // Redirect to DocumentUpload page
-        navigate('/document-upload');
       }
     } catch (error) {
       console.error('Error registering vehicle:', error.response ? error.response.data : error.message);
-      setError('There was an error registering the vehicle. Please make sure all fields are filled.');
+      Swal.fire({
+        title: 'Registration Failed',
+        text: 'There was an error registering your vehicle. Please try again.',
+        icon: 'error',
+        confirmButtonColor: '#F38120',
+      });
+      setError('There was an error registering the vehicle. Please make sure all fields are filled correctly.');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -154,7 +223,7 @@ export default function UserVehicleRegister() {
             transition={{ duration: 0.5 }}
             className="mb-6"
           >
-            <h1 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#F38120] to-[#F3A620] text-center">
+            <h1 className="text-4xl font-bold text-[#F38120] text-center">
               Vehicle Registration
             </h1>
           </motion.div>
@@ -222,6 +291,10 @@ export default function UserVehicleRegister() {
               />
             </div>
 
+            <div className="mt-4 p-4 bg-blue-50 border-l-4 border-blue-500 text-blue-700 rounded">
+              <p>A confirmation email will be sent to your registered email address once your vehicle registration is submitted.</p>
+            </div>
+
             <motion.div
               className="mt-6 flex justify-center"
               whileHover={{ scale: 1.05 }}
@@ -229,9 +302,20 @@ export default function UserVehicleRegister() {
             >
               <button
                 type="submit"
-                className="px-8 py-3 bg-gradient-to-r from-[#F38120] to-[#F3A620] text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 text-lg font-semibold"
+                className="px-8 py-3 bg-gradient-to-r from-[#F38120] to-[#F3A620] text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 text-lg font-semibold flex items-center"
+                disabled={isSubmitting}
               >
-                Register Vehicle
+                {isSubmitting ? (
+                  <>
+                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Processing...
+                  </>
+                ) : (
+                  "Register Vehicle"
+                )}
               </button>
             </motion.div>
           </motion.form>

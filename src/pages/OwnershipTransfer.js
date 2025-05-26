@@ -22,7 +22,7 @@ const OwnershipTransfer = () => {
   useEffect(() => {
     const fetchPendingTransfers = async () => {
       try {
-        const response = await axios.get('http://localhost:8085/api/transactions/pendingtransfers');
+        const response = await axios.get('https://api-securechain-fcf7cnfkcebug3em.westindia-01.azurewebsites.net/api/transactions/pendingtransfers');
         const pendingTransfers = response.data;
 
         // Enrich each transfer with user details for CNIC and set initial status/registration number
@@ -33,13 +33,13 @@ const OwnershipTransfer = () => {
             vehicle.registrationNumber = 'To be assigned';
 
             // Fetch from-user details
-            const fromUserRes = await axios.get(`http://localhost:8085/api/user/${vehicle.FromUserId}`);
+            const fromUserRes = await axios.get(`https://api-securechain-fcf7cnfkcebug3em.westindia-01.azurewebsites.net/api/user/${vehicle.FromUserId}`);
             const fromUserData = fromUserRes.data;
             vehicle.FromUserCnic = fromUserData.cnic;
 
             // If ToUserId exists, fetch their details as well
             if (vehicle.ToUserId) {
-              const toUserRes = await axios.get(`http://localhost:8085/api/user/${vehicle.ToUserId}`);
+              const toUserRes = await axios.get(`https://api-securechain-fcf7cnfkcebug3em.westindia-01.azurewebsites.net/api/user/${vehicle.ToUserId}`);
               const toUserData = toUserRes.data;
               vehicle.ToUserCnic = toUserData.cnic;
             } else {
@@ -83,7 +83,7 @@ const OwnershipTransfer = () => {
 
     if (registrationNumber) {
       try {
-        const response = await axios.post('http://localhost:8085/api/approveTransfer', 
+        const response = await axios.post('https://api-securechain-fcf7cnfkcebug3em.westindia-01.azurewebsites.net/api/approveTransfer', 
           { transactionId }, 
           {
             headers: {
@@ -109,11 +109,11 @@ const OwnershipTransfer = () => {
         // Fetch from and to user details to send emails
         const approvedVehicle = vehicles.find(v => v.TransactionId === transactionId);
         if (approvedVehicle) {
-          const fromUserRes = await axios.get(`http://localhost:8085/api/user/${approvedVehicle.FromUserId}`);
+          const fromUserRes = await axios.get(`https://api-securechain-fcf7cnfkcebug3em.westindia-01.azurewebsites.net/api/user/${approvedVehicle.FromUserId}`);
           const fromUserData = fromUserRes.data;
 
           // Send email to from-user
-          await axios.post('http://localhost:8085/api/send-email', {
+          await axios.post('https://api-securechain-fcf7cnfkcebug3em.westindia-01.azurewebsites.net/api/send-email', {
             to: fromUserData.email,
             subject: 'Ownership Transfer Approved',
             data: {
@@ -125,11 +125,11 @@ const OwnershipTransfer = () => {
           });
 
           if (approvedVehicle.ToUserId) {
-            const toUserRes = await axios.get(`http://localhost:8085/api/user/${approvedVehicle.ToUserId}`);
+            const toUserRes = await axios.get(`https://api-securechain-fcf7cnfkcebug3em.westindia-01.azurewebsites.net/api/user/${approvedVehicle.ToUserId}`);
             const toUserData = toUserRes.data;
 
             // Send email to to-user
-            await axios.post('http://localhost:8085/api/send-email', {
+            await axios.post('https://api-securechain-fcf7cnfkcebug3em.westindia-01.azurewebsites.net/api/send-email', {
               to: toUserData.email,
               subject: 'Ownership Transfer Approved',
               data: {
@@ -155,7 +155,7 @@ const OwnershipTransfer = () => {
 
   const handleReject = async (transactionId) => {
     try {
-      const response = await axios.post('http://localhost:8085/api/rejectTransfer', 
+      const response = await axios.post('https://api-securechain-fcf7cnfkcebug3em.westindia-01.azurewebsites.net/api/rejectTransfer', 
         { transactionId }, 
         {
           headers: {
@@ -181,11 +181,11 @@ const OwnershipTransfer = () => {
       // Fetch from and to user details to send emails
       const rejectedVehicle = vehicles.find(v => v.TransactionId === transactionId);
       if (rejectedVehicle) {
-        const fromUserRes = await axios.get(`http://localhost:8085/api/user/${rejectedVehicle.FromUserId}`);
+        const fromUserRes = await axios.get(`https://api-securechain-fcf7cnfkcebug3em.westindia-01.azurewebsites.net/api/user/${rejectedVehicle.FromUserId}`);
         const fromUserData = fromUserRes.data;
 
         // Send email to from-user
-        await axios.post('http://localhost:8085/api/send-email', {
+        await axios.post('https://api-securechain-fcf7cnfkcebug3em.westindia-01.azurewebsites.net/api/send-email', {
           to: fromUserData.email,
           subject: 'Ownership Transfer Rejected',
           data: {
@@ -197,11 +197,11 @@ const OwnershipTransfer = () => {
         });
 
         if (rejectedVehicle.ToUserId) {
-          const toUserRes = await axios.get(`http://localhost:8085/api/user/${rejectedVehicle.ToUserId}`);
+          const toUserRes = await axios.get(`https://api-securechain-fcf7cnfkcebug3em.westindia-01.azurewebsites.net/api/user/${rejectedVehicle.ToUserId}`);
           const toUserData = toUserRes.data;
 
           // Send email to to-user
-          await axios.post('http://localhost:8085/api/send-email', {
+          await axios.post('https://api-securechain-fcf7cnfkcebug3em.westindia-01.azurewebsites.net/api/send-email', {
             to: toUserData.email,
             subject: 'Ownership Transfer Rejected',
             data: {

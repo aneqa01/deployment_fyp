@@ -58,7 +58,7 @@ const UserChangePassword = () => {
 
     try {
       const response = await axios.put(
-        "http://localhost:8085/api/update-password",
+        "https://api-securechain-fcf7cnfkcebug3em.westindia-01.azurewebsites.net/api/update-password",
         { newPassword: formData.newPassword },
         { headers: { Authorization: `Bearer ${token}` } }
       );

@@ -99,7 +99,7 @@ const UserTransferTo = () => {
 
     try {
       // Make API request to transfer ownership
-      const response = await axios.post('http://localhost:8085/api/transferOwnership', {
+      const response = await axios.post('https://api-securechain-fcf7cnfkcebug3em.westindia-01.azurewebsites.net/api/transferOwnership', {
         vehicleId,
         currentOwnerId: loggedInUserId,
         newOwnerCnic: formData.cnic,

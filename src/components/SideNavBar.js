@@ -12,6 +12,7 @@ import {
   FaUserEdit,
   FaEdit,
   FaDotCircle,
+  FaTag,
 } from 'react-icons/fa';
 import { Link, useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
@@ -55,7 +56,9 @@ const SideNavBar = ({ logout, navOpen, userRole }) => {
         { path: '/user-dashboard', label: 'Dashboard', icon: <FaListAlt /> },
         { path: '/edit-profile', label: 'Profile Change', icon: <FaUserEdit /> },
         { path: '/change-password', label: 'Password', icon: <FaKey /> },
-        
+        { path: '/e-tagcars', label: 'E-Tag', icon: <FaTag /> },
+
+       
 
        
       ],
@@ -68,18 +71,22 @@ const SideNavBar = ({ logout, navOpen, userRole }) => {
         { path: '/govt-change-password', label: 'Change Password', icon: <FaKey /> },
         { path: '/vehicle-registry', label: 'Vehicle Registry', icon: <FaCarAlt /> },
         { path: '/edit-govt', label: 'Edit Profile', icon: <FaEdit /> },
+        { path: '/comppleted-payments', label: 'E-Tag', icon: <FaTag/> },
+        
+
+       
 
       ],
     },
     {
-      role: 'InspectionOfficer',
-      links: [
-        { path: '/inspector-dashboard', label: 'Dashboard', icon: <FaWrench /> },
-        { path: '/inspect-request', label: 'request', icon: <FaTools /> },
-        {path: '/vehicle-details/:vehicleId', label: 'Vehicle Details', icon: <FaCarAlt />},
-        
-      ],
-    },
+  role: 'InspectionOfficer',
+  links: [
+    { path: '/inspector-dashboard', label: 'Dashboard',       icon: <FaWrench /> },
+    { path: '/inspect-request',     label: 'Requests',        icon: <FaTools />  },
+    { path: '/etag-transfer',       label: 'E-Tag Transfer',  icon: <FaTag />    },  // ← NEW
+  ],
+},
+
   ];
 
   // Filter links for the current userRole

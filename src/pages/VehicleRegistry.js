@@ -74,7 +74,7 @@ const VehicleRegistry = () => {
   // Function to fetch registered and approved vehicles data
   const fetchVehicles = async () => {
     try {
-      const response = await axios.get('http://localhost:8085/api/vehicles/registered');
+      const response = await axios.get('https://api-securechain-fcf7cnfkcebug3em.westindia-01.azurewebsites.net/api/vehicles/registered');
       setVehicles(response.data);
     } catch (error) {
       console.error('Error fetching vehicles data:', error);

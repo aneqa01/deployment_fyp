@@ -59,7 +59,7 @@ const EditProfile = () => {
         if (userId) {
           setFormData((prevState) => ({ ...prevState, UserId: userId }));
           axios
-            .get(`http://localhost:8085/api/user/${userId}`, {
+            .get(`https://api-securechain-fcf7cnfkcebug3em.westindia-01.azurewebsites.net/api/user/${userId}`, {
               headers: { Authorization: `Bearer ${token}` },
             })
             .then((response) => {
@@ -105,7 +105,7 @@ const EditProfile = () => {
     };
 
     try {
-      await axios.put("http://localhost:8085/api/updateUser", updatedFormData, {
+      await axios.put("https://api-securechain-fcf7cnfkcebug3em.westindia-01.azurewebsites.net/api/updateUser", updatedFormData, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
