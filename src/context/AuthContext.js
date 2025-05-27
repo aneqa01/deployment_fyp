@@ -20,7 +20,7 @@ const AuthProvider = ({ children }) => {
       axios.defaults.headers.common['Authorization'] = `Bearer ${storedToken}`;
       
       axios
-        .get(`http://localhost:8085/api/user/${userID}`)
+        .get(`https://api-securechain-fcf7cnfkcebug3em.westindia-01.azurewebsites.net/api/user/${userID}`)
         .then(response => {
           setUser(response.data);
           setLoading(false);
@@ -37,7 +37,7 @@ const AuthProvider = ({ children }) => {
   // Function for user login
   const login = async (email, password) => {
     try {
-      const response = await axios.post('http://localhost:8085/api/login', { email, password });
+      const response = await axios.post('https://api-securechain-fcf7cnfkcebug3em.westindia-01.azurewebsites.net/api/login', { email, password });
       localStorage.setItem('token', response.data.token);
       setToken(response.data.token);
       axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;

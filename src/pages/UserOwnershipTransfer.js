@@ -94,7 +94,7 @@ const UserOwnershipTransfer = () => {
     const fetchUserVehicles = async () => {
       if (loggedInUserId) {
         try {
-          const response = await axios.get(`http://localhost:8085/api/vehicles/user/${loggedInUserId}`);
+          const response = await axios.get(`https://api-securechain-fcf7cnfkcebug3em.westindia-01.azurewebsites.net/api/vehicles/user/${loggedInUserId}`);
           setVehicles(response.data);
         } catch (error) {
           console.error('Error fetching user vehicles:', error);

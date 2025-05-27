@@ -111,7 +111,7 @@ export default function SignupPage() {
 
       setIsLoading(true);
       try {
-        const res = await axios.post('http://localhost:8085/api/send-Regotp', { email });
+        const res = await axios.post('https://api-securechain-fcf7cnfkcebug3em.westindia-01.azurewebsites.net/api/send-Regotp', { email });
         if (res.status === 200) {
           Swal.fire('OTP Sent!', 'Please check your email for the OTP.', 'info');
           setIsOtpSent(true);
@@ -134,10 +134,10 @@ export default function SignupPage() {
 
       setIsLoading(true);
       try {
-        const verifyRes = await axios.post('http://localhost:8085/api/verify-Regotp', { email, otp });
+        const verifyRes = await axios.post('https://api-securechain-fcf7cnfkcebug3em.westindia-01.azurewebsites.net/api/verify-Regotp', { email, otp });
         if (verifyRes.status === 200) {
           // OTP is correct => proceed to create user
-          const createRes = await axios.post('http://localhost:8085/api/user', {
+          const createRes = await axios.post('https://api-securechain-fcf7cnfkcebug3em.westindia-01.azurewebsites.net/api/user', {
             name: username,
             email,
             password,

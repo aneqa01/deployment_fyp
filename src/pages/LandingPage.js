@@ -13,6 +13,7 @@ import {
 import { AiOutlineMenu } from 'react-icons/ai';
 import ContactForm from '../components/ChatForm';
 import LoadingPage from './Loading';
+import {Link} from 'react-router-dom'
 
 const TriangleBackground = () => {
   return (
@@ -261,6 +262,92 @@ const LandingPage = () => {
 
       {/* Hero Section */}
       <section
+  id="hero"
+  className="relative pt-20 pb-32 flex content-center items-center justify-center min-h-screen"
+>
+  <div className="container max-w-7xl mx-auto px-4">
+    <div className="flex flex-wrap items-center">
+
+      {/* Hero Text (now sits above the image) */}
+      <div className="w-full lg:w-6/12 px-4 ml-auto mr-auto text-center relative z-20">
+        <motion.h1
+          className="text-5xl font-semibold leading-tight mb-6"
+          initial={{ opacity: 0, y: -50 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+        >
+          A New Era of{' '}
+          <span className="text-[#F38120]">Vehicle Registration</span>
+        </motion.h1>
+
+        <motion.p
+          className="mt-4 text-lg text-gray-600"
+          initial={{ opacity: 0, y: 50 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.4 }}
+        >
+          Blockchain Based Vehicle Registration System brings blockchain
+          technology to revolutionize how we register and manage vehicle
+          information.
+        </motion.p>
+
+        {/* Learn More Button */}
+        <Link to="/learn" className="inline-block">
+          <motion.button
+            className="z-10 bg-[#F38120] text-white active:bg-[#e0701c] font-bold uppercase text-base px-8 py-3 rounded-full shadow-md hover:shadow-lg outline-none focus:outline-none mt-8 ease-linear transition-all duration-150 inline-flex items-center"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5, delay: 0.6 }}
+          >
+            Learn More <FaArrowRight className="ml-2" />
+          </motion.button>
+        </Link>
+      </div>
+
+      {/* Hero Image (now behind the text) */}
+      <motion.div
+        className="w-full lg:w-6/12 px-4 ml-auto mr-auto"
+        style={{ opacity }}
+        initial={{ x: 100, opacity: 0 }}
+        animate={{ x: 0, opacity: 1 }}
+        transition={{ duration: 0.8, delay: 0.5 }}
+      >
+        <motion.div
+          className="h-[400px] relative"       /* ← removed z-50 */
+          animate={{
+            y: [0, -20, 0],
+            rotateZ: [0, 5, 0],
+          }}
+          transition={{
+            duration: 5,
+            repeat: Infinity,
+            ease: 'easeInOut',
+          }}
+        >
+          <img
+            src="/herocar.png"
+            alt="Hero Car"
+            className="w-full h-full object-contain"
+          />
+        </motion.div>
+      </motion.div>
+    </div>
+  </div>
+
+  {/* Wave-like Divider */}
+  <div className="absolute bottom-0 left-0 right-0">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
+      <path
+        fill="#4A4D52"
+        fillOpacity="1"
+        d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,122.7C672,117,768,139,864,154.7C960,171,1056,181,1152,165.3C1248,149,1344,107,1392,85.3L1440,64L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
+      />
+    </svg>
+  </div>
+</section>
+<section
         id="hero"
         className="relative pt-20 pb-32 flex content-center items-center justify-center min-h-screen"
       >
@@ -288,19 +375,19 @@ const LandingPage = () => {
                 to revolutionize how we register and manage vehicle information.
               </motion.p>
 
-              {/* Learn More Button */}
-              <motion.button
-                onClick={() => (window.location.href = '/learn')}
-                className="z-10 bg-[#F38120] text-white active:bg-[#e0701c] font-bold uppercase text-base px-8 py-3 rounded-full shadow-md hover:shadow-lg outline-none focus:outline-none mt-8 ease-linear transition-all duration-150 inline-flex items-center"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.5, delay: 0.6 }}
-              >
-                Learn More
-                <FaArrowRight className="ml-2" />
-              </motion.button>
+              <Link to="/learn" className="inline-block">
+                <motion.button
+                  className="z-10 bg-[#F38120] text-white active:bg-[#e0701c] font-bold uppercase text-base px-8 py-3 rounded-full shadow-md hover:shadow-lg outline-none focus:outline-none mt-8 ease-linear transition-all duration-150 inline-flex items-center"
+                  /* REMOVE any onClick */
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.5, delay: 0.6 }}
+                >
+                  Learn More <FaArrowRight className="ml-2" />
+                </motion.button>
+              </Link>
 
             </div>
 

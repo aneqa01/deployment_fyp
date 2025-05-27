@@ -7,7 +7,7 @@ const TopNavBar = ({ toggleNav }) => {
   const navigate = useNavigate();
 
   const goToHomePage = () => {
-    navigate('/x');
+    navigate('/');
   };
 
   return (

@@ -44,7 +44,7 @@ export default function ForgotPasswordPage() {
     }
 
     try {
-      const response = await fetch('http://localhost:8085/api/send-otp', {
+      const response = await fetch('https://api-securechain-fcf7cnfkcebug3em.westindia-01.azurewebsites.net/api/send-otp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),
@@ -99,7 +99,7 @@ export default function ForgotPasswordPage() {
     }
 
     try {
-      const response = await fetch('http://localhost:8085/api/verify-otp', {
+      const response = await fetch('https://api-securechain-fcf7cnfkcebug3em.westindia-01.azurewebsites.net/api/verify-otp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, otp }),

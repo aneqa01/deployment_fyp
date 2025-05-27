@@ -53,7 +53,7 @@ const DocumentUpload = () => {
     formData.append('file', file);
 
     try {
-      const response = await axios.post('http://localhost:8085/api/uploadDocument', formData, {
+      const response = await axios.post('https://api-securechain-fcf7cnfkcebug3em.westindia-01.azurewebsites.net/api/uploadDocument', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -76,7 +76,7 @@ const DocumentUpload = () => {
 
   const handleSubmitAll = async () => {
     try {
-      const response = await axios.post('http://localhost:8085/api/submitAllDocuments', {
+      const response = await axios.post('https://api-securechain-fcf7cnfkcebug3em.westindia-01.azurewebsites.net/api/submitAllDocuments', {
         vehicleId,
         documents: uploadedDocuments,
       });

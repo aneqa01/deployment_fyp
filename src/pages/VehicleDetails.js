@@ -23,7 +23,7 @@ const VehicleDetails = () => {
             console.log("📡 Fetching Vehicle Details for ID:", vehicleId);
 
             try {
-                const response = await axios.get(`http://localhost:8085/api/vehicleById`, {
+                const response = await axios.get(`https://api-securechain-fcf7cnfkcebug3em.westindia-01.azurewebsites.net/api/vehicleById`, {
                     params: { vehicleId }
                 });
 

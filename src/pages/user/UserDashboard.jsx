@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaCarAlt, FaExchangeAlt, FaFileAlt, FaChevronRight, FaUser } from 'react-icons/fa';
+import { FaCarAlt, FaExchangeAlt, FaFileAlt, FaChevronRight, FaUser, FaMoneyBillWave } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext';
 import SideNavBar from '../../components/SideNavBar';
@@ -61,10 +61,10 @@ const UserDashboard = () => {
       if(localStorage.getItem('token') != null){
         navigate('/user-dashboard');
       }
-      setIsAnimating(false);  // Disable animation after 3 seconds
+      setIsAnimating(false);
     }, 3000);
 
-    return () => clearTimeout(timer);  // Clear timer on component unmount
+    return () => clearTimeout(timer);
   }, [navigate]);
 
   return (
@@ -140,6 +140,19 @@ const UserDashboard = () => {
                   title="My Vehicles"
                   description="View all your registered vehicles."
                   onClick={() => navigate('/user-my-vehicles')}
+                />
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0, y: 50 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -50 }}
+                transition={{ duration: 0.5, delay: 0.3 }}
+              >
+                <FeatureCard
+                  icon={<FaMoneyBillWave />}
+                  title="My Challans"
+                  description="View all your challans."
+                  onClick={() => navigate('/user-my-challans')}
                 />
               </motion.div>
             </AnimatePresence>

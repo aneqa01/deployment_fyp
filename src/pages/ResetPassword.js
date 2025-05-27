@@ -66,7 +66,7 @@ export default function ResetPassword() {
       setIsLoading(true);
 
       // Call the API to update the password
-      const response = await fetch('http://localhost:8085/api/update-password', {
+      const response = await fetch('https://api-securechain-fcf7cnfkcebug3em.westindia-01.azurewebsites.net/api/update-password', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, newPassword }),
