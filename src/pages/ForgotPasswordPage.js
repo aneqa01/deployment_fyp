@@ -226,7 +226,7 @@ function SubmitButton({ isLoading, text }) {
       whileTap={{ scale: 0.95 }}
       disabled={isLoading}
     >
-      {isLoading ? 'Loading...' : text}
+      {isLoading ? '' : text}
     </motion.button>
   );
 }

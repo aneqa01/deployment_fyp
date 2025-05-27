@@ -13,6 +13,7 @@ import {
   FaEdit,
   FaDotCircle,
   FaTag,
+  FaTag,
 } from 'react-icons/fa';
 import { Link, useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
@@ -59,6 +60,9 @@ const SideNavBar = ({ logout, navOpen, userRole }) => {
         { path: '/e-tagcars', label: 'E-Tag', icon: <FaTag /> },
 
        
+        { path: '/e-tagcars', label: 'E-Tag', icon: <FaTag /> },
+
+       
 
        
       ],
@@ -80,6 +84,14 @@ const SideNavBar = ({ logout, navOpen, userRole }) => {
       ],
     },
     {
+  role: 'InspectionOfficer',
+  links: [
+    { path: '/inspector-dashboard', label: 'Dashboard',       icon: <FaWrench /> },
+    { path: '/inspect-request',     label: 'Requests',        icon: <FaTools />  },
+    { path: '/etag-transfer',       label: 'E-Tag Transfer',  icon: <FaTag />    },  // ← NEW
+  ],
+},
+
   role: 'InspectionOfficer',
   links: [
     { path: '/inspector-dashboard', label: 'Dashboard',       icon: <FaWrench /> },

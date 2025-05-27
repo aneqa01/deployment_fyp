@@ -44,6 +44,7 @@ const App = () => {
     <AuthProvider>
       <Router>
         <Routes>
+        <Routes>
           {/* Public Routes */}
           <Route path="/" element={<LandingPage />} />
           <Route path="/signup" element={<SignupPage />} />
@@ -67,6 +68,7 @@ const App = () => {
           />
 
           <Route
+          <Route
             path="/document-upload"
             element={
               <PrivateRoute role="user">
@@ -75,6 +77,7 @@ const App = () => {
             }
           />
 
+
           <Route
             path="/edit-profile"
             element={
@@ -82,7 +85,20 @@ const App = () => {
                 <EditProfile />
               </PrivateRoute>
             }
+            path="/edit-profile"
+            element={
+              <PrivateRoute role="user">
+                <EditProfile />
+              </PrivateRoute>
+            }
           />
+          <Route
+            path="/change-password"
+            element={
+              <PrivateRoute role="user">
+                <UserChangePassword />
+              </PrivateRoute>
+            }
           <Route
             path="/change-password"
             element={
@@ -163,6 +179,45 @@ const App = () => {
 
 
 
+          <Route
+            path="/user-my-challans"
+            element={
+              <PrivateRoute role="user">
+                <UserMyChallans />
+              </PrivateRoute>
+            }
+          />
+
+          {/* Payment Routes */}
+          <Route
+            path="/payment-success"
+            element={
+              <PrivateRoute role="user">
+                <PaymentSuccess />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/payment-cancelled"
+            element={
+              <PrivateRoute role="user">
+                <PaymentCancelled />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/e-tagcars"
+            element={
+              <PrivateRoute role="user">
+                <UserVehiclesWithEtag />
+              </PrivateRoute>
+            }
+          />
+
+
+
+
+
 
           {/* Admin Dashboard Routes (restricted to role="admin") */}
           <Route
@@ -170,13 +225,16 @@ const App = () => {
             element={
               <PrivateRoute role="InspectionOfficer">
                 <InspectionOfficerDashboard />
+                <InspectionOfficerDashboard />
               </PrivateRoute>
             }
           />
           <Route
+          <Route
             path="/inspect-request"
             element={
               <PrivateRoute role="InspectionOfficer">
+                <InspectionOfficerRequests />
                 <InspectionOfficerRequests />
               </PrivateRoute>
             }
@@ -195,9 +253,20 @@ const App = () => {
             element={
               <PrivateRoute role="InspectionOfficer">
                 <EtagTransfer />
+                <VehicleDetails />
               </PrivateRoute>
             }
           />
+          <Route
+            path="/etag-transfer"
+            element={
+              <PrivateRoute role="InspectionOfficer">
+                <EtagTransfer />
+              </PrivateRoute>
+            }
+          />
+
+
 
 
           {/* Government Official Routes (restricted to role="government official") */}
@@ -222,9 +291,19 @@ const App = () => {
             element={
               <PrivateRoute role="government official">
                 <PaidTransactions />
+                <PendingRegistrations />
               </PrivateRoute>
             }
           />
+          <Route
+            path="/comppleted-payments"
+            element={
+              <PrivateRoute role="government official">
+                <PaidTransactions />
+              </PrivateRoute>
+            }
+          />
+          <Route
           <Route
             path="/govt-change-password"
             element={
@@ -249,9 +328,30 @@ const App = () => {
             element={
               <PrivateRoute role="government official">
                 <TransactionDetails />
+                <ChangePasswordGovernmentOfficial />
               </PrivateRoute>
             }
           />
+
+          <Route
+            path="/explorer"
+            element={
+              <PrivateRoute role="government official">
+                <BlockchainExplorer />
+              </PrivateRoute>
+            }
+          />
+
+
+          <Route
+            path="/transaction-details/:transactionId"
+            element={
+              <PrivateRoute role="government official">
+                <TransactionDetails />
+              </PrivateRoute>
+            }
+          />
+
 
           <Route
             path="/edit-govt"
@@ -261,6 +361,7 @@ const App = () => {
               </PrivateRoute>
             }
           />
+
 
           <Route
             path="/ownership-transfers"
@@ -314,5 +415,9 @@ const App = () => {
     </AuthProvider>
   )
 }
+  )
+}
+
+export default App
 
 export default App

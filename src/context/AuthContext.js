@@ -76,7 +76,7 @@ const AuthProvider = ({ children }) => {
         updateEmail, // Expose the updateEmail function
       }}
     >
-      {loading ? <div>Loading...</div> : children}
+      {loading ? <div></div> : children}
     </AuthContext.Provider>
   );
 };
